@@ -9,7 +9,7 @@ pipeline {
 
             steps {
 
-                sshagent(['docker-server-key']) {
+                sshagent(['ubuntu_docker']) {
 
                     sh '''
 
@@ -34,7 +34,7 @@ pipeline {
 
             steps {
 
-                sshagent(['docker-server-key']) {
+                sshagent(['ubuntu_docker']) {
 
                     sh '''
 

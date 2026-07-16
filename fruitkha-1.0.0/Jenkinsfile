@@ -1,0 +1,80 @@
+pipeline {
+
+    agent any
+
+
+    stages {
+
+
+        stage('Checkout Code') {
+
+            steps {
+
+                git branch: 'main',
+                credentialsId: 'hs-44',
+                url: 'https://github.com/hs-44/Jenkins_sonarcube_docker.git'
+
+            }
+        }
+
+
+
+        stage('Deploy To Docker Server') {
+
+            steps {
+
+
+                sshagent(['ubuntu_docker']) {
+
+
+                    sh '''
+
+                    ssh -o StrictHostKeyChecking=no ubuntu@54.82.85.32 "
+                    mkdir -p ~/website
+                    "
+
+
+                    scp -o StrictHostKeyChecking=no -r \
+                    fruitkha-1.0.0 \
+                    ubuntu@54.82.85.32:~/website/
+
+
+                    ssh -o StrictHostKeyChecking=no ubuntu@54.82.85.32 "
+
+                    cd ~/website/fruitkha-1.0.0
+
+
+                    docker rm -f fruitkha-website || true
+
+
+                    docker build -t mywebsite1 .
+
+
+                    docker run -d \
+                    -p 8086:80 \
+                    --name fruitkha-website \
+                    mywebsite
+
+
+                    "
+
+
+                    ssh -o StrictHostKeyChecking=no ubuntu@54.82.85.32 "
+
+                    docker ps
+
+                    "
+
+
+                    '''
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+}

@@ -36,7 +36,7 @@ pipeline {
 
                     scp -o StrictHostKeyChecking=no -r \
                     fruitkha-1.0.0 \
-                    ubuntu@54.89.204.152 :~/website/
+                    ubuntu@54.89.204.152:~/website/
 
 
                     ssh -o StrictHostKeyChecking=no ubuntu@54.89.204.152 "

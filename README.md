@@ -4,7 +4,28 @@
 
 This project demonstrates an end-to-end CI/CD pipeline using GitHub, Jenkins, SonarQube, Docker, and AWS EC2.
 
-Whenever code is pushed to GitHub, Jenkins automatically triggers the pipeline, performs static code analysis using SonarQube, transfers the application to a Docker server, builds a Docker image, and deploys the application inside a Docker container.
+Whenever code is pushed to GitHub, Jenkins automatically triggers the build process. The project supports multiple Jenkins configurations:
+
+* Jenkins Freestyle Project
+* Jenkins Pipeline Project
+
+It includes two different Jenkinsfiles:
+
+1. **Jenkinsfile without SonarQube**
+
+   * Performs source code checkout
+   * Transfers application files to Docker Server
+   * Builds Docker image
+   * Deploys application container
+
+2. **Jenkinsfile with SonarQube**
+
+   * Performs source code checkout
+   * Executes SonarQube static code analysis
+   * Checks code quality
+   * Transfers application files to Docker Server
+   * Builds Docker image
+   * Deploys application container
 
 ---
 
@@ -45,15 +66,139 @@ Developer
 
 # Technologies Used
 
-- AWS EC2
-- Jenkins
-- GitHub
-- GitHub Webhooks
-- SonarQube Community Edition
-- Docker
-- Ubuntu Linux
-- Git
-- Nginx
+* AWS EC2
+* Jenkins
+* Jenkins Freestyle Project
+* Jenkins Pipeline Project
+* GitHub
+* GitHub Webhooks
+* SonarQube Community Edition
+* Docker
+* Ubuntu Linux
+* Git
+* Nginx
+
+---
+
+# Jenkins Project Configurations
+
+This project contains two Jenkins implementation approaches.
+
+## 1. Jenkins Freestyle Project
+
+The Freestyle project is configured using the Jenkins GUI.
+
+### Configuration Includes:
+
+* GitHub Repository Integration
+* GitHub Webhook Trigger
+* Git Checkout
+* SonarQube Build Step (optional)
+* SSH File Transfer to Docker Server
+* Remote Shell Execution
+* Docker Image Build
+* Docker Container Deployment
+
+### Freestyle Workflow
+
+```
+GitHub Push
+      │
+      ▼
+GitHub Webhook
+      │
+      ▼
+Jenkins Freestyle Job
+      │
+      ▼
+Checkout Code
+      │
+      ▼
+SonarQube Analysis (Optional)
+      │
+      ▼
+Copy Files to Docker Server
+      │
+      ▼
+Docker Build
+      │
+      ▼
+Docker Run
+      │
+      ▼
+Application Live
+```
+
+---
+
+## 2. Jenkins Pipeline Project
+
+The Pipeline project uses Jenkinsfile for automation.
+
+Two pipeline versions are available:
+
+### Jenkinsfile Without SonarQube
+
+Pipeline stages:
+
+```
+Checkout Code
+      │
+      ▼
+Transfer Files
+      │
+      ▼
+Docker Build
+      │
+      ▼
+Docker Deploy
+```
+
+### Jenkinsfile With SonarQube
+
+Pipeline stages:
+
+```
+Checkout Code
+      │
+      ▼
+SonarQube Analysis
+      │
+      ▼
+Quality Check
+      │
+      ▼
+Transfer Files
+      │
+      ▼
+Docker Build
+      │
+      ▼
+Docker Deploy
+```
+
+---
+
+# Jenkins Files Structure
+
+```
+.
+├── Jenkinsfile
+├── Jenkinsfile-sonarqube
+├── Dockerfile
+├── README.md
+├── fruitkha-1.0.0/
+├── assets/
+└── images/
+```
+
+### Jenkinsfile
+
+Pipeline configuration without SonarQube integration.
+
+### Jenkinsfile-sonarqube
+
+Pipeline configuration with SonarQube static code analysis.
 
 ---
 
@@ -63,11 +208,11 @@ Developer
 
 Launch three AWS EC2 instances.
 
-| Instance | Purpose |
-|----------|----------|
-| Jenkins | CI/CD Automation |
-| SonarQube | Code Quality Analysis |
-| Docker | Application Deployment |
+| Instance  | Purpose                |
+| --------- | ---------------------- |
+| Jenkins   | CI/CD Automation       |
+| SonarQube | Code Quality Analysis  |
+| Docker    | Application Deployment |
 
 ---
 
@@ -75,11 +220,12 @@ Launch three AWS EC2 instances.
 
 Configure Jenkins
 
-- Install Jenkins
-- Create Freestyle Project
-- Connect GitHub Repository
-- Configure GitHub Credentials
-- Enable GitHub Webhook Trigger
+* Install Jenkins
+* Create Freestyle Project
+* Create Pipeline Project
+* Connect GitHub Repository
+* Configure GitHub Credentials
+* Enable GitHub Webhook Trigger
 
 ---
 
@@ -87,12 +233,12 @@ Configure Jenkins
 
 Configure SonarQube
 
-- Install Java
-- Download SonarQube Community Edition
-- Start SonarQube
-- Create Project
-- Generate Analysis Token
-- Configure SonarScanner
+* Install Java
+* Download SonarQube Community Edition
+* Start SonarQube
+* Create Project
+* Generate Analysis Token
+* Configure SonarScanner
 
 ---
 
@@ -100,11 +246,11 @@ Configure SonarQube
 
 Integrate SonarQube with Jenkins
 
-- Install SonarQube Scanner Plugin
-- Configure SonarQube Server
-- Add Sonar Token
-- Configure SonarScanner Tool
-- Add Sonar Build Step
+* Install SonarQube Scanner Plugin
+* Configure SonarQube Server
+* Add Sonar Token
+* Configure SonarScanner Tool
+* Add Sonar Build Step
 
 ---
 
@@ -112,11 +258,11 @@ Integrate SonarQube with Jenkins
 
 Configure Docker Server
 
-- Install Docker Engine
-- Enable Docker Service
-- Configure SSH Access
-- Generate Jenkins SSH Key
-- Copy Public Key to Docker Server
+* Install Docker Engine
+* Enable Docker Service
+* Configure SSH Access
+* Generate Jenkins SSH Key
+* Copy Public Key to Docker Server
 
 ---
 
@@ -126,11 +272,11 @@ Configure Remote Deployment
 
 Install Jenkins SSH2 Easy Plugin
 
-Configure
+Configure:
 
-- Server Group
-- Remote Server
-- SSH Authentication
+* Server Group
+* Remote Server
+* SSH Authentication
 
 ---
 
@@ -177,47 +323,16 @@ docker run -d -p 8085:80 --name fruitkha-website mywebsite
 
 ---
 
-# Jenkins Pipeline Flow
-
-```
-GitHub Push
-      │
-      ▼
-GitHub Webhook
-      │
-      ▼
-Jenkins Build
-      │
-      ▼
-Checkout Code
-      │
-      ▼
-SonarQube Analysis
-      │
-      ▼
-Copy Files to Docker Server
-      │
-      ▼
-Docker Build
-      │
-      ▼
-Docker Run
-      │
-      ▼
-Application Live
-```
-
----
-
 # SonarQube Analysis
 
-The project performs
+The SonarQube-enabled pipeline performs:
 
-- Static Code Analysis
-- Bug Detection
-- Vulnerability Detection
-- Code Smell Detection
-- Security Hotspot Analysis
+* Static Code Analysis
+* Bug Detection
+* Vulnerability Detection
+* Code Smell Detection
+* Security Hotspot Analysis
+* Code Quality Reporting
 
 ---
 
@@ -225,7 +340,11 @@ The project performs
 
 ✅ GitHub Webhook Integration
 
-✅ Jenkins Automation
+✅ Jenkins Freestyle Automation
+
+✅ Jenkins Pipeline Automation
+
+✅ Two Jenkinsfiles (With and Without SonarQube)
 
 ✅ SonarQube Static Analysis
 
@@ -241,59 +360,46 @@ The project performs
 
 ---
 
-# Project Structure
-
-```
-.
-├── Dockerfile
-├── Jenkinsfile
-├── README.md
-├── fruitkha-1.0.0/
-├── assets/
-└── images/
-```
-
----
-
 # Screenshots
 
 Add screenshots for:
 
-- AWS EC2 Instances
-- Jenkins Dashboard
-- Jenkins Build Success
-- SonarQube Dashboard
-- Docker Container
-- Running Website
-- GitHub Repository
-- Pipeline Build Logs
+* AWS EC2 Instances
+* Jenkins Freestyle Job
+* Jenkins Pipeline Job
+* Jenkins Build Success
+* SonarQube Dashboard
+* Docker Container
+* Running Website
+* GitHub Repository
+* Pipeline Build Logs
 
 ---
 
 # Future Improvements
 
-- Convert Freestyle Project to Jenkins Pipeline
-- Docker Hub Integration
-- Kubernetes Deployment
-- ArgoCD
-- Terraform
-- Prometheus Monitoring
-- Grafana Dashboard
-- Email Notifications
-- Slack Notifications
+* Docker Hub Integration
+* Kubernetes Deployment
+* ArgoCD
+* Terraform
+* Prometheus Monitoring
+* Grafana Dashboard
+* Email Notifications
+* Slack Notifications
 
 ---
 
 # Learning Outcomes
 
-- Jenkins CI/CD
-- SonarQube Integration
-- Docker Deployment
-- AWS EC2
-- GitHub Webhooks
-- SSH Automation
-- Linux Administration
-- DevOps Best Practices
+* Jenkins CI/CD
+* Jenkins Freestyle and Pipeline Projects
+* SonarQube Integration
+* Docker Deployment
+* AWS EC2
+* GitHub Webhooks
+* SSH Automation
+* Linux Administration
+* DevOps Best Practices
 
 ---
 

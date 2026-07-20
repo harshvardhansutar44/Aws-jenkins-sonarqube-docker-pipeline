@@ -1,0 +1,135 @@
+pipeline {
+
+    agent any
+
+
+    environment {
+        SONAR_PROJECT_KEY = "Fruit-Website"
+    }
+
+
+    stages {
+
+
+        stage('Checkout Code') {
+
+            steps {
+
+                git branch: 'main',
+                credentialsId: 'hs-44',
+                url: 'https://github.com/hs-44/Jenkins_sonarcube_docker.git'
+
+            }
+        }
+
+
+
+        stage('SonarQube Analysis') {
+
+            steps {
+
+                echo "Running SonarQube Analysis"
+
+
+                withSonarQubeEnv('sonar-server') {
+
+                    script {
+
+                        def scannerHome = tool 'sonar-scanner'
+
+
+                        sh """
+                        
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                        -Dsonar.sources=.
+
+                        """
+
+                    }
+
+                }
+
+            }
+
+        }
+
+
+
+        stage('Deploy To Docker Server') {
+
+            steps {
+
+
+                sshagent(['ubuntu_docker']) {
+
+
+                    sh '''
+
+                    ssh -o StrictHostKeyChecking=no ubuntu@98.90.195.26 "
+                    mkdir -p ~/website
+                    "
+
+
+                    scp -o StrictHostKeyChecking=no -r \
+                    fruitkha-1.0.0 \
+                    ubuntu@98.90.195.26:~/website/
+
+
+                    ssh -o StrictHostKeyChecking=no ubuntu@98.90.195.26 "
+
+                    cd ~/website/fruitkha-1.0.0
+
+
+                    docker rm -f fruitkha-website || true
+
+
+                    docker build -t mywebsite1 .
+
+
+                    docker run -d \
+                    -p 8086:80 \
+                    --name fruitkha-website \
+                    mywebsite1
+
+
+                    "
+
+
+                    ssh -o StrictHostKeyChecking=no ubuntu@98.90.195.26 "
+
+                    docker ps
+
+                    "
+
+
+                    '''
+
+                }
+
+            }
+
+        }
+
+
+    }
+
+
+    post {
+
+        success {
+
+            echo "Deployment Successful"
+
+        }
+
+
+        failure {
+
+            echo "Deployment Failed"
+
+        }
+
+    }
+
+}
